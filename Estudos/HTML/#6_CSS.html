@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Domus</title>
+    <link rel="stylesheet"href="Style.css">
+</head>
+<br><br>
+
+<body class="body">
+    <form class="inputs" action="../../index.html" method="POST">
+
+        <div class="emailfield">
+            <div class="label">
+                <label id="emaillabel" for="useremail">E-mail:</label><br>
+            </div>
+            <div class="input">
+                <input type="email" id="useremail" name="useremail"><br><br>
+            </div>
+        </div>
+
+        <div class="passwordfield">
+            <div class="label">
+                <label id="passwordlabel" for="userpassword">Senha:</label><br>
+            </div>
+            <div class="input">
+                <input type="password" id="userpassword" name="userpassword"><br><br>
+            </div>
+        </div>
+        
+        <div class="robofield">
+            <div class="label">
+                <label id="robolabel" for="robo">Você é um Robô</label><br>
+            </div>
+            <div class="input">
+                <input type="radio" id="robo" name="robo" value="sim"> Sim
+                <input type="radio" id="humano" name="humano" value="nao"> Não<br><br>
+            </div>
+        </div>
+
+        <div class="capchafield">
+            <input type="checkbox" id="capcha" name="capcha">
+            <label id="captchalabel"for="capcha">Aceita os termos de serviço!?</label><br>
+        </div>
+        <div class="submitfield">
+            <div class="label">
+                <input id="submitlabel" type="submit" value="Enviar"><br><br>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
+
+<!--
+   Utilizando ids em conjunto com o CSS
+    para estilizar os forms.
+ -->
+
