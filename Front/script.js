@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const userTableBody = document.querySelector('#user-table tbody');
-  const addUserForm = document.getElementById('addUserForm');
+  const userTableBody = document.querySelector('#userTable tbody');
+  const userForm = document.getElementById('userForm');
   const nomeInput = document.getElementById('nome');
   const sobrenomeInput = document.getElementById('sobrenome');
   const senhaInput = document.getElementById('senha');
+  const submitButton = userForm.querySelector('button[type="submit"]');
 
-  // Carrega os usuários ao abrir a página
   async function loadUsers() {
     const response = await fetch('http://localhost:3000/users');
     const users = await response.json();
-    userTableBody.innerHTML = ''; // Limpa a tabela antes de inserir os dados
+    userTableBody.innerHTML = '';
 
     users.forEach(user => {
       const row = document.createElement('tr');
@@ -17,49 +17,82 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${user.id}</td>
         <td>${user.nome}</td>
         <td>${user.sobrenome}</td>
-        <td><button onclick="deleteUser(${user.id})">Deletar</button></td>
+        <td class="actions">
+          <button class="edit-btn" data-id="${user.id}">Editar</button>
+          <button class="delete-btn" data-id="${user.id}">Deletar</button>
+        </td>
       `;
       userTableBody.appendChild(row);
     });
+
+    attachActionListeners();
   }
 
-  // Envia dados para criar um novo usuário
-  addUserForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Impede o envio do formulário
+  function attachActionListeners() {
+    const editButtons = document.querySelectorAll('.edit-btn');
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+
+    editButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const id = button.dataset.id;
+        const response = await fetch(`http://localhost:3000/users/${id}`);
+        const user = await response.json();
+
+        nomeInput.value = user.nome;
+        sobrenomeInput.value = user.sobrenome;
+        senhaInput.value = '';
+        userForm.dataset.editingId = id;
+        submitButton.textContent = 'Atualizar Usuário';
+      });
+    });
+
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const id = button.dataset.id;
+        const response = await fetch(`http://localhost:3000/users/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) loadUsers();
+        else console.error('Erro ao deletar usuário');
+      });
+    });
+  }
+
+  userForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
     const nome = nomeInput.value;
     const sobrenome = sobrenomeInput.value;
     const senha = senhaInput.value;
+    const editingId = userForm.dataset.editingId;
 
-    const response = await fetch('http://localhost:3000/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ nome, sobrenome, senha }),
-    });
+    const payload = { nome, sobrenome, senha };
 
-    const newUser = await response.json();
-    console.log('Usuário criado:', newUser);
-
-    loadUsers(); // Recarrega a lista de usuários
-    addUserForm.reset(); // Limpa os campos do formulário
-  });
-
-  // Deleta um usuário
-  window.deleteUser = async (id) => {
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
-      method: 'DELETE',
-    });
+    let response;
+    if (editingId) {
+      response = await fetch(`http://localhost:3000/users/${editingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      delete userForm.dataset.editingId;
+      submitButton.textContent = 'Criar Usuário';
+    } else {
+      response = await fetch('http://localhost:3000/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    }
 
     if (response.ok) {
-      loadUsers(); // Recarrega a lista de usuários após exclusão
-      console.log(`Usuário ${id} deletado`);
+      loadUsers();
+      userForm.reset();
     } else {
-      console.log('Erro ao deletar usuário');
+      console.error('Erro ao salvar usuário');
     }
-  };
+  });
 
-  // Carrega os usuários ao iniciar
   loadUsers();
 });
