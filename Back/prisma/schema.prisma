@@ -1,0 +1,253 @@
+// ========================
+// CONFIGURAÇÃO PRISMA
+// ========================
+
+generator client {
+  provider = "prisma-client-js" 
+}
+
+datasource db {
+  provider = "sqlite"           // Banco em SQlite - memória
+  url      = env("DATABASE_URL")    // Usa variável de ambiente para a URL do banco
+}
+
+
+// ========================
+// ENUMS
+// ========================
+
+// enum TipoUso {
+//   CONTINUO    
+//   DESCARTAVEL 
+// }
+
+// enum TipoTransacao {
+//   RECORRENTE 
+//   VARIAVEL   
+// }
+
+// ========================
+// MODELS
+// ========================
+
+model User {
+  id          Int       @id @default(autoincrement())
+  nome        String
+  sobrenome   String
+  senha       String
+  criadoEm    DateTime @default(now())
+
+  // Relacionamentos
+  emails        Email[]   
+  telefones     Telefone[]   
+  endPessoais   EPessoal[]   
+  endComerciais EComercial[]   
+  entradas      Entrada[]   
+  saidas        Saida[]   
+  contas        Conta[]   
+  receitas      Receita[]   
+  compras       Compra[]   
+  estoques      Estoque[]   
+}
+
+model Email {
+  id       Int     @id @default(autoincrement())
+  email    String
+  userId   Int
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([email, userId])
+}
+
+model Telefone {
+  id       Int     @id @default(autoincrement())
+  numero   String
+  ddd      Int
+  userId   Int
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([numero, userId])
+}
+
+model Localidade {
+  id          Int     @id @default(autoincrement())
+  cidade      String
+  bairro      String
+
+  enderecosPessoais   EPessoal[]   
+  enderecosComerciais EComercial[]   
+}
+
+model EPessoal {
+  id          Int     @id @default(autoincrement())
+  rua         String
+  numero      String
+  userId      Int
+  localidadeId Int
+
+  user       User       @relation(fields: [userId], references: [id])
+  localidade Localidade @relation(fields: [localidadeId], references: [id])
+
+  @@unique([rua, numero, localidadeId, userId])
+}
+
+model EComercial {
+  id          Int     @id @default(autoincrement())
+  rua         String
+  numero      String
+  userId      Int
+  localidadeId Int
+
+  user       User       @relation(fields: [userId], references: [id])
+  localidade Localidade @relation(fields: [localidadeId], references: [id])
+
+  @@unique([rua, numero, localidadeId, userId])
+}
+
+model Conta {
+  id       Int     @id @default(autoincrement())
+  nome     String
+  banco    String
+  saldo    Int     @default(0)
+  userId   Int
+
+  user     User     @relation(fields: [userId], references: [id])
+  entradas Entrada[]   
+  saidas   Saida[]   
+
+  @@index([userId])
+}
+
+model Entrada {
+  id        Int     @id @default(autoincrement())
+  nome      String
+  //tipo      TipoTransacao
+  data      DateTime
+  valor     Int
+  userId    Int
+  contaId   Int
+
+  user  User  @relation(fields: [userId], references: [id])
+  conta Conta @relation(fields: [contaId], references: [id])
+
+  @@unique([nome, userId])
+}
+
+model Saida {
+  id        Int     @id @default(autoincrement())
+  nome      String
+  //tipo      TipoTransacao
+  data      DateTime
+  valor     Int
+  userId    Int
+  contaId   Int
+
+  user  User  @relation(fields: [userId], references: [id])
+  conta Conta @relation(fields: [contaId], references: [id])
+
+  @@unique([nome, userId])
+}
+
+model Receita {
+  id           Int     @id @default(autoincrement())
+  nome         String  @unique
+  dataTentativa DateTime
+  nota         String?
+  userId       Int
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Unidade {
+  id        Int     @id @default(autoincrement())
+  nome      String
+  sigla     String
+
+  produtos Produto[]   
+  estoques Estoque[]   
+  compras  Compra[]   
+}
+
+model Categoria {
+  id          Int     @id @default(autoincrement())
+  nome        String
+  descricao   String?
+
+  produtos Produto[]   
+}
+
+model Lote {
+  id          Int     @id @default(autoincrement())
+  nome        String
+  validade    DateTime
+  quantidade  Int
+
+  produtos Produto[]   
+}
+
+model Produto {
+  id          Int     @id @default(autoincrement())
+  nome        String
+  descricao   String?
+  valor       Int
+  criadoEm    DateTime
+  //uso         TipoUso
+  fotoUrl     String?
+  dataCompra  DateTime?
+
+  categoriaId Int
+  loteId      Int
+  unidadeId   Int
+
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
+  lote      Lote      @relation(fields: [loteId], references: [id])
+  unidade   Unidade   @relation(fields: [unidadeId], references: [id])
+
+  estoques Estoque[]   
+  compras  Compra[]   
+}
+
+model Estoque {
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  produtoId  Int
+  unidadeId  Int
+  quantidade Int
+
+  produto Produto @relation(fields: [produtoId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  unidade Unidade @relation(fields: [unidadeId], references: [id])
+
+  @@index([userId])
+}
+
+model Lista {
+  id         Int     @id @default(autoincrement())
+  nome       String
+  descricao  String?
+  valorTotal Int
+  finalizada Boolean
+  dataCriada DateTime @default(now())
+
+  compras Compra[]   
+}
+
+model Compra {
+  id         Int     @id @default(autoincrement())
+  listaId    Int
+  produtoId  Int
+  userId     Int
+  unidadeId  Int
+  quantidade Int
+  dataCompra DateTime @default(now())
+
+  lista   Lista   @relation(fields: [listaId], references: [id])
+  produto Produto @relation(fields: [produtoId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  unidade Unidade @relation(fields: [unidadeId], references: [id])
+
+  @@unique([listaId, produtoId, userId])
+}
+

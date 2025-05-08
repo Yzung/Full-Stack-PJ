@@ -1,0 +1,45 @@
+/* Estilo geral da página */
+body {
+    font-family: sans-serif;       /* Fonte padrão */
+    margin: 2rem;                  /* Espaçamento da borda */
+    background: #f4f4f4;           /* Cor de fundo */
+    color: #333;                   /* Cor do texto */
+  }
+  
+  /* Título principal */
+  h1 {
+    margin-bottom: 1rem;           /* Espaço inferior */
+  }
+  
+  /* Layout do formulário */
+  form {
+    display: flex;                 /* Alinhamento horizontal */
+    gap: 1rem;                     /* Espaço entre inputs */
+    margin-bottom: 2rem;           /* Distância da tabela */
+  }
+  
+  /* Estilo dos inputs e botão */
+  input, button {
+    padding: 0.5rem;               /* Espaçamento interno */
+    border: 1px solid #ccc;        /* Borda leve */
+    border-radius: 4px;            /* Arredondamento */
+  }
+  
+  /* Estilo da tabela */
+  table {
+    width: 100%;                   /* Ocupa toda largura */
+    border-collapse: collapse;     /* Remove espaço entre células */
+  }
+  
+  /* Células da tabela */
+  th, td {
+    padding: 0.75rem;              /* Espaço interno */
+    border: 1px solid #ccc;        /* Borda padrão */
+    text-align: left;              /* Alinhamento do texto */
+  }
+  
+  /* Cursor de botão em ponteiro */
+  button {
+    cursor: pointer;
+  }
+  
