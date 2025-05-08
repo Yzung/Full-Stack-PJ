@@ -6,13 +6,13 @@ const {
   createUser,
   updateUser,
   deleteUser
-} = require('../controller/userController.js');
+} = require('../controller/userController.js')
 
-
-router.get('/', getUsers);
-router.get('/:id', getUserById);
-router.post('/', createUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+// Rotas da entidade User
+router.get('/', getUsers);            // GET /users
+router.get('/:id', getUserById);      // GET /users/:id
+router.post('/', createUser);         // POST /users
+router.put('/:id', updateUser);       // PUT /users/:id
+router.delete('/:id', deleteUser);    // DELETE /users/:id
 
 module.exports = router;
