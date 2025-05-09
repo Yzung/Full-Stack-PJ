@@ -1,6 +1,6 @@
 # Sistema de Gestão de Usuários
 
-Este projeto é um sistema simples para gestão de usuários. Ele permite criar, listar, editar e deletar usuários através de uma API RESTful e de uma interface web.
+Projeto Full Stack em desenvolvimento para fins acadêmicos. Ele permite criar, listar, editar e deletar usuários através de uma API RESTful e de uma interface web, futuramente serão implementadas funcções adicionais e catalogadas neste readme.
 
 ## Estrutura do Projeto
 
