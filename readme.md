@@ -1,6 +1,6 @@
 # Sistema de Gestão de Usuários
 
-Projeto Full Stack em desenvolvimento para fins acadêmicos. Ele permite criar, listar, editar e deletar usuários através de uma API RESTful e de uma interface web, futuramente serão implementadas funcções adicionais e catalogadas neste readme.
+Projeto Full Stack em desenvolvimento para fins acadêmicos. Ele permite criar, listar, editar e deletar usuários através de uma API RESTful e de uma interface web, futuramente serão implementadas funções adicionais e catalogadas neste readme.
 
 ## Estrutura do Projeto
 

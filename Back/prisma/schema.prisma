@@ -1,29 +1,28 @@
 // ========================
-// CONFIGURAÇÃO PRISMA
+// CONFIGURATION PRISMA
 // ========================
 
 generator client {
-  provider = "prisma-client-js" 
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"           // Banco em SQlite - memória
-  url      = env("DATABASE_URL")    // Usa variável de ambiente para a URL do banco
+  provider = "sqlite"           // SQLite in-memory database
+  url      = env("DATABASE_URL")    // Uses environment variable for database URL
 }
-
 
 // ========================
 // ENUMS
 // ========================
 
-// enum TipoUso {
-//   CONTINUO    
-//   DESCARTAVEL 
+// enum UsageType {
+//   CONTINUOUS    
+//   DISPOSABLE 
 // }
 
-// enum TipoTransacao {
-//   RECORRENTE 
-//   VARIAVEL   
+// enum TransactionType {
+//   RECURRING 
+//   VARIABLE   
 // }
 
 // ========================
@@ -31,223 +30,197 @@ datasource db {
 // ========================
 
 model User {
-  id          Int       @id @default(autoincrement())
-  nome        String
-  sobrenome   String
-  senha       String
-  criadoEm    DateTime @default(now())
+  id         Int       @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  password   String
+  createdAt  DateTime  @default(now())
 
-  // Relacionamentos
-  emails        Email[]   
-  telefones     Telefone[]   
-  endPessoais   EPessoal[]   
-  endComerciais EComercial[]   
-  entradas      Entrada[]   
-  saidas        Saida[]   
-  contas        Conta[]   
-  receitas      Receita[]   
-  compras       Compra[]   
-  estoques      Estoque[]   
+  // Relationships
+  emails     Email[]
+  phones     Phone[]
+  addresses  Address[]  
+  entries    Entry[]
+  exits      Exit[]
+  accounts   Account[]   
+  revenues   Revenue[]
+  purchases  Purchase[]
+  inventories Inventory[]  
 }
 
 model Email {
-  id       Int     @id @default(autoincrement())
-  email    String
-  userId   Int
+  id        Int    @id @default(autoincrement())
+  email     String @unique
+  userId    Int
 
-  user User @relation(fields: [userId], references: [id])
-
-  @@unique([email, userId])
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Telefone {
-  id       Int     @id @default(autoincrement())
-  numero   String
-  ddd      Int
-  userId   Int
+model Phone {
+  id        Int     @id @default(autoincrement())
+  number    String
+  areaCode  Int
+  userId    Int
 
-  user User @relation(fields: [userId], references: [id])
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([numero, userId])
+  @@unique([number, userId])
 }
 
-model Localidade {
-  id          Int     @id @default(autoincrement())
-  cidade      String
-  bairro      String
+model Address {
+  id        Int     @id @default(autoincrement())
+  street    String
+  number    String
+  city      String
+  neighborhood String
+  userId    Int
 
-  enderecosPessoais   EPessoal[]   
-  enderecosComerciais EComercial[]   
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([street, number, city, neighborhood, userId])
 }
 
-model EPessoal {
-  id          Int     @id @default(autoincrement())
-  rua         String
-  numero      String
-  userId      Int
-  localidadeId Int
+model Account {
+  id        Int     @id @default(autoincrement())
+  name      String
+  bank      String
+  balance   Int     @default(0)
+  userId    Int
 
-  user       User       @relation(fields: [userId], references: [id])
-  localidade Localidade @relation(fields: [localidadeId], references: [id])
-
-  @@unique([rua, numero, localidadeId, userId])
-}
-
-model EComercial {
-  id          Int     @id @default(autoincrement())
-  rua         String
-  numero      String
-  userId      Int
-  localidadeId Int
-
-  user       User       @relation(fields: [userId], references: [id])
-  localidade Localidade @relation(fields: [localidadeId], references: [id])
-
-  @@unique([rua, numero, localidadeId, userId])
-}
-
-model Conta {
-  id       Int     @id @default(autoincrement())
-  nome     String
-  banco    String
-  saldo    Int     @default(0)
-  userId   Int
-
-  user     User     @relation(fields: [userId], references: [id])
-  entradas Entrada[]   
-  saidas   Saida[]   
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries   Entry[]   
+  exits     Exit[]   
 
   @@index([userId])
 }
 
-model Entrada {
+model Entry {
   id        Int     @id @default(autoincrement())
-  nome      String
-  //tipo      TipoTransacao
-  data      DateTime
-  valor     Int
+  name      String
+  //type      TransactionType
+  date      DateTime
+  value     Int
   userId    Int
-  contaId   Int
+  accountId Int
 
-  user  User  @relation(fields: [userId], references: [id])
-  conta Conta @relation(fields: [contaId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+  account   Account @relation(fields: [accountId], references: [id])
 
-  @@unique([nome, userId])
+  @@unique([name, userId])
 }
 
-model Saida {
+model Exit {
   id        Int     @id @default(autoincrement())
-  nome      String
-  //tipo      TipoTransacao
-  data      DateTime
-  valor     Int
+  name      String
+  //type      TransactionType
+  date      DateTime
+  value     Int
   userId    Int
-  contaId   Int
+  accountId Int
 
-  user  User  @relation(fields: [userId], references: [id])
-  conta Conta @relation(fields: [contaId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+  account   Account @relation(fields: [accountId], references: [id])
 
-  @@unique([nome, userId])
+  @@unique([name, userId])
 }
 
-model Receita {
+model Revenue {
   id           Int     @id @default(autoincrement())
-  nome         String  @unique
-  dataTentativa DateTime
-  nota         String?
+  name         String  @unique
+  attemptDate  DateTime
+  note         String?
   userId       Int
 
-  user User @relation(fields: [userId], references: [id])
+  user      User   @relation(fields: [userId], references: [id])
 }
 
-model Unidade {
-  id        Int     @id @default(autoincrement())
-  nome      String
-  sigla     String
-
-  produtos Produto[]   
-  estoques Estoque[]   
-  compras  Compra[]   
-}
-
-model Categoria {
-  id          Int     @id @default(autoincrement())
-  nome        String
-  descricao   String?
-
-  produtos Produto[]   
-}
-
-model Lote {
-  id          Int     @id @default(autoincrement())
-  nome        String
-  validade    DateTime
-  quantidade  Int
-
-  produtos Produto[]   
-}
-
-model Produto {
-  id          Int     @id @default(autoincrement())
-  nome        String
-  descricao   String?
-  valor       Int
-  criadoEm    DateTime
-  //uso         TipoUso
-  fotoUrl     String?
-  dataCompra  DateTime?
-
-  categoriaId Int
-  loteId      Int
-  unidadeId   Int
-
-  categoria Categoria @relation(fields: [categoriaId], references: [id])
-  lote      Lote      @relation(fields: [loteId], references: [id])
-  unidade   Unidade   @relation(fields: [unidadeId], references: [id])
-
-  estoques Estoque[]   
-  compras  Compra[]   
-}
-
-model Estoque {
+model Unit {
   id         Int     @id @default(autoincrement())
-  userId     Int
-  produtoId  Int
-  unidadeId  Int
-  quantidade Int
+  name       String
+  abbreviation String
 
-  produto Produto @relation(fields: [produtoId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
-  unidade Unidade @relation(fields: [unidadeId], references: [id])
+  products   Product[]   
+  inventories Inventory[]   
+  purchases  Purchase[]   
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  products    Product[]   
+}
+
+model Batch {
+  id          Int     @id @default(autoincrement())
+  name        String
+  expiration  DateTime
+  quantity    Int
+
+  products    Product[]   
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  price       Int
+  createdAt   DateTime
+  //usage      UsageType
+  photoUrl    String?
+  purchaseDate DateTime?
+
+  categoryId  Int
+  batchId     Int
+  unitId      Int
+
+  category    Category @relation(fields: [categoryId], references: [id])
+  batch       Batch    @relation(fields: [batchId], references: [id])
+  unit        Unit     @relation(fields: [unitId], references: [id])
+
+  inventories Inventory[]   
+  purchases   Purchase[]   
+}
+
+model Inventory {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  productId Int
+  unitId    Int
+  quantity  Int
+
+  product   Product @relation(fields: [productId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+  unit      Unit    @relation(fields: [unitId], references: [id])
 
   @@index([userId])
 }
 
-model Lista {
-  id         Int     @id @default(autoincrement())
-  nome       String
-  descricao  String?
-  valorTotal Int
-  finalizada Boolean
-  dataCriada DateTime @default(now())
+model List {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  totalValue  Int
+  isFinalized Boolean
+  createdAt   DateTime @default(now())
 
-  compras Compra[]   
+  purchases   Purchase[]   
 }
 
-model Compra {
-  id         Int     @id @default(autoincrement())
-  listaId    Int
-  produtoId  Int
-  userId     Int
-  unidadeId  Int
-  quantidade Int
-  dataCompra DateTime @default(now())
+model Purchase {
+  id          Int     @id @default(autoincrement())
+  listId      Int
+  productId   Int
+  userId      Int
+  unitId      Int
+  quantity    Int
+  purchaseDate DateTime @default(now())
 
-  lista   Lista   @relation(fields: [listaId], references: [id])
-  produto Produto @relation(fields: [produtoId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
-  unidade Unidade @relation(fields: [unidadeId], references: [id])
+  list        List     @relation(fields: [listId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  unit        Unit     @relation(fields: [unitId], references: [id])
 
-  @@unique([listaId, produtoId, userId])
+  @@unique([listId, productId, userId])
 }
-

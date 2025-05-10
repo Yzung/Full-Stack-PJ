@@ -1,16 +1,15 @@
-<!-- Front/pages/consultaUsuarios.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Consulta de Usuários</title>
+  <title>Usuários</title>
   <link rel="stylesheet" href="../assets/css/userList.css" />
 </head>
 <body>
   <header>
-    <h1>Consulta de Usuários</h1>
-    <a href="index.html" class="btn-voltar">Voltar ao Início</a>
+    <h1>Usuários</h1>
+    <a href="index.html" class="btn-back">Página Inicial</a>
   </header>
 
   <main>
@@ -31,14 +30,17 @@
   <div id="editModal" class="modal hidden">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h2>Editar Usuário</h2>
+      <h2>Edit User</h2>
       <form id="editUserForm">
         <input type="hidden" id="editUserId">
-        <input type="text" id="editNome" placeholder="Nome" required />
-        <input type="text" id="editSobrenome" placeholder="Sobrenome" required />
-        <input type="password" id="editSenha" placeholder="Nova Senha" />
+        <input type="text" id="editFirstName" placeholder="Primeiro Nome" required />
+        <input type="text" id="editLastName" placeholder="Sobrenome" required />
+        <input type="password" id="currentPassword" placeholder="Senha atual" required />
+        <input type="password" id="newPassword" placeholder="Nova senha" />
+        <input type="password" id="confirmNewPassword" placeholder="Confirmar nova senha" />
         <button type="submit">Salvar Alterações</button>
       </form>
+      
     </div>
   </div>
 
