@@ -1,6 +1,7 @@
 # Sistema de Gestão de Usuários
 
-Projeto Full Stack em desenvolvimento para fins acadêmicos. Ele permite criar, listar, editar e deletar usuários através de uma API RESTful e de uma interface web, futuramente serão implementadas funções adicionais e catalogadas neste readme.
+Projeto Full Stack em desenvolvimento para fins acadêmicos.
+API RESTful com interface web, futuramente serão implementadas funções adicionais e catalogadas neste readme.
 
 ## Estrutura do Projeto
 
@@ -8,17 +9,18 @@ O projeto está dividido entre o **Backend** e o **Frontend**.
 
 ### 1. Backend
 
-- **Tecnologias utilizadas**: Node.js, Express, Prisma, SQLite (ou MySQL, dependendo da configuração)
+- **Tecnologias utilizadas**: Node.js, Express, Prisma, SQLite, JWT
   
 - **Estrutura de pastas**:
   - `src/`
     - `controller/`: Controladores que gerenciam a lógica de negócios.
       - `userController.js`: Controlador de usuários com métodos para listar, buscar, criar, editar e deletar usuários.
     - `middleware/`: Middleware para autenticação e manipulação de erros.
-      - `userAuth.js`: Middleware de autenticação de usuários (não implementado).
+      - `jwt.js`: Middleware de autenticação de usuários.
       - `errorHandler.js`: Middleware de captura e resposta de erros (não implementado).
     - `route/`: Definição das rotas.
       - `userRoute.js`: Roteamento de endpoints para manipulação de usuários.
+      - `loginRoute.js` : Roteamento do endpoint de login no sistema.
   - `index.js`: Arquivo principal do servidor, onde as rotas são registradas e o servidor é inicializado.
 
 ### 2. Frontend
@@ -32,6 +34,7 @@ O projeto está dividido entre o **Backend** e o **Frontend**.
       - `listUser.css`: Estilo para a página de listagem de usuários.
     - `js/`: Scripts para as páginas de frontend.
       - `createUser.js`: Script para a página de criação de usuários (realiza requisição POST para adicionar usuários).
+      - `login.js`: Script para a tela de login na index.html
       - `listUser.js`: Script para a página de listagem de usuários (realiza requisições GET, PUT e DELETE).
   - `Pages/`
     - `createUser.html`: Página para cadastro de usuários.
